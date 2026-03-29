@@ -4,8 +4,8 @@ export default class HelloWorldPlugin extends Plugin {
 
 	onload(): Promise<void> | void {
 
-		this.registerMarkdownCodeBlockProcessor("countoccurrence", (source, el, ctx) => {
-			this.processCode(source, el);
+		this.registerMarkdownCodeBlockProcessor("countoccurrence", async (source, el, ctx) => {
+			await this.processCode(source, el);
 		});
 
 	}
@@ -18,7 +18,13 @@ export default class HelloWorldPlugin extends Plugin {
 		const ul = el.createEl("ul");
 
 		rows.forEach(row =>
-			ul.createEl("li", { text: `${row}: ${content.match(new RegExp(row, "g"))?.length! - 1}` }));
+			ul.createEl("li", { text: `${row}: ${this.getCount(content, row)}` }));
+	}
+
+	private getCount(content: string, pattern: string): number {
+		const count = content.match(new RegExp(pattern, "g"))?.length;
+
+		return count ? count - 1 : 0;
 	}
 
 }
